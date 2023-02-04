@@ -1,0 +1,7 @@
+{
+  "daq_dir":"/home/jlb1694/data/daq",
+  "raw_dir":"/home/jlb1694/data/raw",
+  "dsp_dir":"/home/jlb1694/data/dsp",
+  "stream_type": "ORCA"
+
+}

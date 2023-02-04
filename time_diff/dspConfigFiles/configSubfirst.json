@@ -1,0 +1,105 @@
+{
+    "outputs": [
+        "channel",
+        "timestamp",
+        "startEnergy",
+        "maxEnergy",
+        "energy",
+        "trapEmax",
+        "trapEmin",
+        "bl_intercept1",
+        "wf_trap",
+        "sub1"
+    ],
+    "processors": {
+        "bl_mean1, bl_std1, bl_slope1, bl_intercept1": {
+            "function": "linear_slope_fit",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[7750:14250]",
+                "bl_mean1",
+                "bl_std1",
+                "bl_slope1",
+                "bl_intercept1"
+            ],
+            "unit": [
+                "ADC",
+                "ADC",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "sub1": {
+            "function": "subline",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform",
+                "bl_slope1",
+                "bl_intercept1",
+                "sub1"
+            ],
+            "prereqs": [
+                "waveform",
+                "bl_intercept1"
+            ],
+            "unit": "ADC"
+        },
+        "wf_trap": {
+            "function": "trap_norm",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "sub1",
+                "7*us",
+                "0.2*us",
+                "wf_trap"
+            ],
+            "prereqs": [
+                "sub1"
+            ],
+            "unit": "ADC"
+        },
+        "tp_min, tp_max, windowMin, trapEmax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "wf_trap[14250:15500]",
+                "tp_min",
+                "tp_max",
+                "windowMin",
+                "trapEmax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "wf_trap"
+            ]
+        },
+        "tp_min1, tp_max1, trapEmin, fullMax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "wf_trap[3000::]",
+                "tp_min",
+                "tp_max",
+                "trapEmin",
+                "fullMax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "wf_trap"
+            ]
+        }
+    }
+}
