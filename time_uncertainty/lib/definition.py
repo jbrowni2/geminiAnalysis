@@ -121,8 +121,10 @@ def apply_trap(wp, rise, flat):
         + wp[i - 2 * rise - flat])/rise
     )
 
+    onset = find_idx(w_trap, 0.01*np.max(w_trap), np.argmax(w_trap))
 
-    return np.max(w_trap[8000::]), w_trap
+
+    return np.max(w_trap[8000::]), onset
 
 @jit(nopython=True)
 def asym_trap(w_in, rise, flat, fall):

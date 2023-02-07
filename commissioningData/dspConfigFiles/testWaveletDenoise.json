@@ -1,0 +1,52 @@
+{
+    "outputs": [
+        "channel",
+        "timestamp",
+        "startEnergy",
+        "maxEnergy",
+        "wf_dn"
+    ],
+    "processors": {
+        "bl_mean1, bl_std1, bl_slope1, bl_intercept1": {
+            "function": "linear_slope_fit",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[100:13800]",
+                "bl_mean1",
+                "bl_std1",
+                "bl_slope1",
+                "bl_intercept1"
+            ],
+            "unit": [
+                "ADC",
+                "ADC",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "sub1": {
+            "function": "subline",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform",
+                "bl_slope1",
+                "bl_intercept1",
+                "sub1"
+            ],
+            "prereqs": [
+                "waveform",
+                "bl_intercept1"
+            ],
+            "unit": "ADC"
+        },
+        "wf_dn": {
+            "function" : "denoise_wave_haar",
+            "module": "pygama.dsp.processors",
+            "args": ["waveform", "4", "wf_dn"],
+            "unit": "ADC"
+        }
+    }
+}

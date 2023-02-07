@@ -1,0 +1,20 @@
+{
+  "ORSIS3316WaveformDecoder": {
+    "Card1": {
+      "key_list": [64],
+        "out_stream": "/home/jlb1694/data/raw/Run1067.lh5"
+      }
+  },
+  "ORiSegHVCardDecoderForHV": {
+    "HV1": {
+      "key_list": [560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575],
+      "out_stream": "/home/jlb1694/data/raw/Run1067.lh5"
+    }
+  },
+  "ORCAEN792NDecoderForQdc": {
+    "QDC": {
+      "key_list": [112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127],
+      "out_stream": "/home/jlb1694/data/raw/Run1190.lh5"
+    }
+  }
+}

@@ -10,7 +10,7 @@ from math import exp, sqrt, pi, erfc
 from lmfit import Model
 import csv
 from scipy.optimize import curve_fit
-import pywt
+from pywt import swt, iswt
 from statistics import median
 import copy
 from matplotlib import colors
@@ -34,10 +34,10 @@ def get_pulse(energy, time, length):
     pulse = np.zeros(length)
     x = np.linspace(-rise-40,rise+40,2*rise+81)
     y = energy/(1 + np.exp(-x/(0.3*rise)))
-    start_time = 10000
+    start_time = 12000
 
-    pulse[10000: 10000+len(x)] = y
-    pulse[10000+len(x)::] = y[-1]
+    pulse[12000: 12000+len(x)] = y
+    pulse[12000+len(x)::] = y[-1]
 
 
     return pulse, start_time
@@ -121,8 +121,8 @@ def apply_trap(wp, rise, flat):
         + wp[i - 2 * rise - flat])/rise
     )
 
+    return np.max(w_trap), w_trap
 
-    return np.max(w_trap[8000::]), w_trap
 
 @jit(nopython=True)
 def asym_trap(w_in, rise, flat, fall):
@@ -165,93 +165,20 @@ def cal_sig(arr):
     return sig, err
 
 @jit(nopython=True)
-def dot(A, B):
-  val = 0
-  for i in range(0, len(A)):
-    val += A[i]*B[i]
+def denoiseWave(cDs, Length):
 
-  return val
-
-@jit(nopython=True)
-def concat(A, B):
-  matNew = np.zeros((len(A)+len(B), len(A[0])))
-  for i in range(0, len(A)):
-    matNew[i] = A[i]
-  for i in range(0, len(B)):
-    matNew[i+len(A)] = B[i]
-  return matNew
-
-@jit(nopython=True)
-def kron(A, B):
-  mat = np.zeros((len(A[0]),len(A)*len(B)))
-  for i in range(0,len(A)):
-    l = 0
-    for j in range(0,len(A[0])):
-      for k in range(0,len(B)):
-        mat[i][l] = A[i][j]*B[k]
-        l+=1
-
-  return mat
-
-@jit(nopython=True)
-def haar_mat(level):
-  s= np.sqrt(2)/2
-  for n in range(0,level+1):
-    if n == 0:
-      mat = np.asarray([[1,1],[1,-1]])*s
-    elif n != 0:
-      mat = concat(kron(mat,[1,1]), kron(np.identity(2**n), [1,-1]))*s
-
-  return mat
-
-@jit(nopython=True)
-def haar_swt(seq, level):
-  mat = haar_mat(level)
-  cds = np.zeros((2**(level+1),len(seq)))
-  for k in range(0,len(cds)):
-    for i in range(0,len(seq)):
-      sub_seq = seq[i:i+2**(level+1)]
-      if len(sub_seq) != len(mat[k]) and i < len(seq)-1:
-        sub_seq = np.asarray([seq[j] for j in range(i-len(seq), i-len(seq)+2**(level+1), 1)])
-      elif i == len(seq)-1:
-        sub_seq = np.asarray([seq[j] for j in range(-1,-1+2**(level+1), 1)])
-
-      cds[k][i] = dot(mat[k], sub_seq)
-
-  return cds
-
-@jit(nopython=True)
-def haar_iswt(cDs: np.ndarray, level:np.int64) -> np.ndarray:
-  seq = np.zeros(len(cDs[0]))
-  mat = haar_mat(level=level)
-  matT = np.transpose(mat)
-  for i in range(0,len(seq)):
-    sub_seq = np.asarray([cDs[j][i] for j in range(0,len(cDs))])
-    seq[i] = dot(matT[0], sub_seq)
-  return seq
-
-#@jit(nopython=True)
-#aver(arr:np.ndarray)->int:
-@jit(nopython=True)
-def cut_wave(cDs: np.ndarray, level: np.int64) -> np.ndarray:
-    threshold=np.zeros(2**(level+1))
-    for l in range(1,len(cDs)):
-        median_value = np.median(cDs[l])
-        median_average_deviation = np.median(np.absolute(cDs[l] - median_value))
+    j = 0
+    threshold = []
+    for cD in cDs:
+        median_value = np.median(cD[1])
+        median_average_deviation = np.median(np.absolute(cD[1] - median_value))
+        #median_average_deviation = np.median([np.absolute(number-median_value) for number in cD[1]])
         sig1 = median_average_deviation/0.6745
-        threshold[l] = np.float64(sig1*np.sqrt(2*np.log(len(cDs[l]))))
-    #threshold = np.float64(np.sqrt(2*np.log(len(wave))))
+        threshold.append(np.float64(sig1*np.sqrt(2*np.log(Length))))
 
-    for l in range(1,len(cDs)):
-        for i in range(0,len(cDs[l])):
-            if np.absolute(cDs[l][i]) < threshold[l]:
-                cDs[l][i] = np.float64(0.0)
+    j = 0
+    for cD in cDs:
+        cD[1][np.absolute(cD[1]) < threshold[j]] = np.float64(0.0)
+        j += 1
 
     return cDs
-
-def denoiseWave(wave:np.ndarray, level: np.int64)->np.ndarray:      
-    cDs = haar_swt(wave, level)
-    cDs = cut_wave(cDs, level)
-    wave = haar_iswt(cDs, level)
-
-    return wave

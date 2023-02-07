@@ -1,0 +1,21 @@
+{
+  "ORSIS3316WaveformDecoder": {
+    "Det1723": {
+      "key_list": [47],
+        "out_stream": "/media/jlb1694/Gemini-1/raw/Run1067.lh5"
+      },
+    "Det1724": {
+      "key_list": [32],
+        "out_stream": "/media/jlb1694/Gemini-1/raw/Run1067.lh5"
+      },
+    "Det1725": {
+      "key_list": [47],
+        "out_stream": "/media/jlb1694/Gemini-1/raw/Run1067.lh5"
+      },
+    "Det1726": {
+      "key_list": [40],
+        "out_stream": "/media/jlb1694/Gemini-1/raw/Run1067.lh5"
+      }
+    }
+
+}

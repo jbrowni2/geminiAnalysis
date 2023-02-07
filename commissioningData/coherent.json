@@ -1,0 +1,7 @@
+{
+  "daq_dir":"/media/jlb1694/Gemini-1/data",
+  "raw_dir":"/media/jlb1694/Gemini-1/raw",
+  "dsp_dir":"/home/jlb1694/data/dsp",
+  "stream_type": "ORCA"
+
+}

@@ -1,0 +1,66 @@
+{
+    "outputs": [
+        "channel",
+        "timestamp",
+        "startEnergy",
+        "maxEnergy",
+        "energy",
+        "trapEmax"
+    ],
+    "processors": {
+        "bl_mean1, bl_std1, bl_slope1, bl_intercept1": {
+            "function": "linear_slope_fit",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[100:15000]",
+                "bl_mean1",
+                "bl_std1",
+                "bl_slope1",
+                "bl_intercept1"
+            ],
+            "unit": [
+                "ADC",
+                "ADC",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "sub1": {
+            "function": "bl_subtract",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform",
+                "bl_intercept1",
+                "sub1"
+            ],
+            "prereqs": [
+                "waveform",
+                "bl_intercept1"
+            ],
+            "unit": "ADC"
+        },
+        "tp_min, tp_max, wf_min, trapEmax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "sub1",
+                "tp_min",
+                "tp_max",
+                "wf_min",
+                "trapEmax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "sub1"
+            ]
+        }
+    }
+}

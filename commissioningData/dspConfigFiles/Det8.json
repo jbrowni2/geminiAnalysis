@@ -1,0 +1,200 @@
+{
+    "outputs": [
+        "channel",
+        "timestamp",
+        "beamOffEmax",
+        "beamOnEmax",
+        "tp_max0",
+        "tp_50"
+    ],
+    "processors": {
+        "beamOffwfTpMin, beamOffwfTpMax, beamOffwfMin, beamOffwfMax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[1100:10000]",
+                "beamOffwfTpMin",
+                "beamOffwfTpMax",
+                "beamOffwfMin",
+                "beamOffwfMax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "beamOffTpStop": {
+            "function": "time_point_thresh",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform",
+                "beamOffWfMax*0.1",
+                "beamOffwfTpMax",
+                0,
+                "beamOffTpStop"
+            ],
+            "unit": "ns"
+        },
+        "beamOffMean, beamOffStd, beamOffSlope, beamOffIntercept": {
+            "function": "linear_slope_fit",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[100:beamOffTpStop]",
+                "beamOffMean",
+                "beamOffStd",
+                "beamOffSlope",
+                "beamOffIntercept"
+            ],
+            "unit": [
+                "ADC",
+                "ADC",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "beamOffSubtract": {
+            "function": "bl_subtract",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform",
+                "beamOffIntercept",
+                "beamOffSubtract"
+            ],
+            "prereqs": [
+                "waveform",
+                "beamOffIntercept"
+            ],
+            "unit": "ADC"
+        },
+        "beamOffWfTrap": {
+            "function": "trap_norm",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "beamOffSubtract",
+                "8*us",
+                "0.5*us",
+                "beamOffWfTrap"
+            ],
+            "prereqs": [
+                "beamOffSubtract"
+            ],
+            "unit": "ADC"
+        },
+        "tp_min, tp_max, wf_min, beamOffEmax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "beamOffWfTrap[0:10000]",
+                "tp_min",
+                "tp_max",
+                "wf_min",
+                "beamOffEmax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "beamOffWfTrap"
+            ]
+        },
+        "beamOnwfTpMin, beamOnwfTpMax, beamOnwfMin, beamOnwfMax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[15000:20000]",
+                "beamOnwfTpMin",
+                "beamOnwfTpMax",
+                "beamOnwfMin",
+                "beamOnwfMax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "beamOnMean, beamOnStd, beamOnSlope, beamOnIntercept": {
+            "function": "linear_slope_fit",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[10000:beamOnwfTpMax-1000]",
+                "beamOnMean",
+                "beamOnStd",
+                "beamOnSlope",
+                "beamOnIntercept"
+            ],
+            "unit": [
+                "ADC",
+                "ADC",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "beamOnSubtract": {
+            "function": "bl_subtract",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform",
+                "beamOnIntercept",
+                "beamOnSubtract"
+            ],
+            "prereqs": [
+                "waveform",
+                "beamOnIntercept"
+            ],
+            "unit": "ADC"
+        },
+        "beamOnWfTrap": {
+            "function": "trap_norm",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "beamOnSubtract",
+                "8*us",
+                "0.5*us",
+                "beamOnWfTrap"
+            ],
+            "prereqs": [
+                "beamOnSubtract"
+            ],
+            "unit": "ADC"
+        },
+        "tp_min1, tp_max1, wf_min1, beamOnEmax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "beamOnWfTrap[10000:20000]",
+                "tp_min1",
+                "tp_max1",
+                "wf_min1",
+                "beamOnEmax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "beamOnWfTrap"
+            ]
+        }
+    }
+}

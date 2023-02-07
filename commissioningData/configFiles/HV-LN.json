@@ -1,0 +1,20 @@
+{
+    "ORSIS3316WaveformDecoder": {
+      "Card1": {
+        "key_list": [64],
+          "out_stream": "/home/jlb1694/data/raw/Run1067.lh5"
+        }
+    },
+    "ORiSegHVCardDecoderForHV": {
+      "HV1": {
+        "key_list": [640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655],
+        "out_stream": "/home/jlb1694/data/raw/Run1067.lh5"
+      }
+    },
+    "ORAmi286DecoderForLevel": {
+      "LN": {
+        "key_list": [1024, 1025, 1026, 1027],
+        "out_stream": "/home/jlb1694/data/raw/Run1067.lh5"
+      }
+    }
+  }

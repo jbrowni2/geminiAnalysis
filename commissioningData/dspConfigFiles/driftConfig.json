@@ -1,0 +1,8 @@
+{
+  "ORSIS3316WaveformDecoder": {
+    "Card1": {
+      "key_list": [57,59],
+        "out_stream": "/home/jlb1694/data/raw/Run1067.lh5"
+      }
+  }
+}

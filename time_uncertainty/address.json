@@ -1,0 +1,6 @@
+{
+  "daq_dir":"/home/jlb1694/data/daq",
+  "tier1_dir":"/home/jlb1694/data/raw",
+  "tier2_dir":"/home/jlb1694/data/dsp",
+  "lh5_dir":"/HOME/data/"
+}

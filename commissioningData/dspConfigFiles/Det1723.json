@@ -1,0 +1,142 @@
+{
+    "outputs": [
+        "channel",
+        "timestamp",
+        "trapEmax",
+        "trapEmin",
+        "fullMax",
+        "back1",
+        "back2"
+    ],
+    "processors": {
+        "bl_mean1, bl_std1, bl_slope1, bl_intercept1": {
+            "function": "linear_slope_fit",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[100:6500]",
+                "bl_mean1",
+                "bl_std1",
+                "bl_slope1",
+                "bl_intercept1"
+            ],
+            "unit": [
+                "ADC",
+                "ADC",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "sub1": {
+            "function": "subline",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform",
+                "bl_slope1",
+                "bl_intercept1",
+                "sub1"
+            ],
+            "prereqs": [
+                "waveform",
+                "bl_intercept1"
+            ],
+            "unit": "ADC"
+        },
+        "wf_trap": {
+            "function": "trap_norm",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "sub1",
+                "9.5*us",
+                "0.2*us",
+                "wf_trap"
+            ],
+            "prereqs": [
+                "sub1"
+            ],
+            "unit": "ADC"
+        },
+        "tp_min, tp_max, windowMin, trapEmax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "wf_trap[12500:18750]",
+                "tp_min",
+                "tp_max",
+                "windowMin",
+                "trapEmax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "wf_trap"
+            ]
+        },
+        "tp_min1, tp_max1, trapEmin, fullMax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "wf_trap[100::]",
+                "tp_min1",
+                "tp_max1",
+                "trapEmin",
+                "fullMax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "wf_trap"
+            ]
+        },
+        "tp_min2, tp_max2, wf_min2, back1": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "wf_trap[18750:25000]",
+                "tp_min2",
+                "tp_max2",
+                "wf_min2",
+                "back1"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "wf_trap"
+            ]
+        },
+        "tp_min3, tp_max3, wf_min3, back2": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "wf_trap[25000:35000]",
+                "tp_min3",
+                "tp_max3",
+                "wf_min3",
+                "back2"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "wf_trap"
+            ]
+        }
+    }
+}

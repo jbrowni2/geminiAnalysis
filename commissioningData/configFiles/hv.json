@@ -1,0 +1,14 @@
+{
+  "ORSIS3316WaveformDecoder": {
+    "Card1": {
+      "key_list": [48],
+        "out_stream": "/home/jlb1694/data/raw/Run1067.lh5"
+      }
+  },
+  "ORiSegHVCardDecoderForHV": {
+    "HV1": {
+      "key_list": [560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575],
+      "out_stream": "/home/jlb1694/data/raw/Run1067.lh5"
+    }
+  }
+}

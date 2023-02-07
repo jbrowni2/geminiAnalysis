@@ -1,0 +1,90 @@
+{
+    "outputs": [
+        "channel",
+        "timestamp",
+        "startEnergy",
+        "maxEnergy",
+        "trapEmax",
+        "tp_max",
+        "tp_50"
+    ],
+    "processors": {
+        "bl_mean1, bl_std1, bl_slope1, bl_intercept1": {
+            "function": "linear_slope_fit",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform[1000:10000]",
+                "bl_mean1",
+                "bl_std1",
+                "bl_slope1",
+                "bl_intercept1"
+            ],
+            "unit": [
+                "ADC",
+                "ADC",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "waveform"
+            ]
+        },
+        "sub1": {
+            "function": "subline",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "waveform",
+                "bl_slope1",
+                "bl_intercept1",
+                "sub1"
+            ],
+            "unit": "ADC"
+        },
+        "wf_trap": {
+            "function": "trap_norm",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "sub1",
+                "8.0*us",
+                "0.8*us",
+                "wf_trap"
+            ],
+            "prereqs": [
+                "sub1"
+            ],
+            "unit": "ADC"
+        },
+        "tp_min, tp_max, wf_min, trapEmax": {
+            "function": "min_max",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "wf_trap",
+                "tp_min",
+                "tp_max",
+                "wf_min",
+                "trapEmax"
+            ],
+            "unit": [
+                "ns",
+                "ns",
+                "ADC",
+                "ADC"
+            ],
+            "prereqs": [
+                "wf_trap"
+            ]
+        },
+        "tp_50": {
+            "function": "time_point_thresh",
+            "module": "pygama.dsp.processors",
+            "args": [
+                "wf_trap",
+                "trapEmax",
+                "tp_max",
+                0,
+                "tp_50"
+            ],
+            "unit": "ns"
+        }
+    }
+}
